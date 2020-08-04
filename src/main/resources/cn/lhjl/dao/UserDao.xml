@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lhjl.dao.UserDao">
+    <select id="findAll" resultType="user">
+    select * from user
+</select>
+    <!--    查不到会返回null-->
+    <select id="findUserByUsernameAndPassword" parameterType="user" resultType="user">
+        select * from user where username=#{username} and password=#{password}
+    </select>
+    <insert id="add" parameterType="user">
+        insert into user values(#{id},#{name},#{gender},#{age},#{address},#{qq},#{email},#{username},#{password})
+    </insert>
+    <delete id="delete" parameterType="int">
+        delete from user where id=#{id}
+    </delete>
+    <select id="findUser" parameterType="int" resultType="user">
+        select * from user where id=#{id}
+    </select>
+    <update id="update" parameterType="user">
+        update user set name=#{name},gender=#{gender},age=#{age},address=#{address},qq=#{qq},email=#{email},username
+        =#{username},password=#{password} where id=#{id}
+    </update>
+
+    <select id="findTotalCount" parameterType="user" resultType="int">
+        select count(id)from user
+        <where>
+            <if test="name!=null and name!=''">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="address!=null and address!=''">
+                and address like concat('%',#{address},'%')
+            </if>
+            <if test="email!=null and email!=''">
+                and email like concat('%',#{email},'%')
+            </if>
+        </where>
+    </select>
+    <select id="findUsersByPage" resultType="user" parameterType="queryVo">
+        select * from user
+        <where>
+            <if test="user.name!=null and user.name!=''">
+                and name like concat('%',#{user.name},'%')
+            </if>
+            <if test="user.address!=null and user.address!=''">
+                and address like concat('%',#{user.address},'%')
+            </if>
+            <if test="user.email!=null and user.email!=''">
+                and email like concat('%',#{user.email},'%')
+            </if>
+        </where>
+        limit #{currentIndex},#{rows}
+    </select>
+    <select id="findByUser" resultType="user" parameterType="String">
+        select * from user where name=#{name}
+    </select>
+    <update id="updateSessionIdForAccount" parameterType="Id_SessionId">
+        update user_session set sessionId=#{sessionId} where account_id=#{account_id}
+    </update>
+    <select id="querySessionId" parameterType="int" resultType="String">
+        select sessionId from user_session where account_id=#{account_id}
+    </select>
+</mapper>
